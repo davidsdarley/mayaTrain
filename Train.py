@@ -56,6 +56,8 @@ class Car: #builds and holds specified cars
     def build(self):
         if self.carType == "engine":
             return self.engine()
+        elif self.carType == "passenger":
+            return self.passenger()
         else:
             return False
 
@@ -118,9 +120,20 @@ class Car: #builds and holds specified cars
         Probably be smart to make a function to make one of these and then just call it any time I need boxcar type
         wheels.
         '''
+        car.append(self.wheelSet(3))
+        car.append(self.wheelSet(-3))
         #Long box for the passengers to go into
         """make a box that only goes about halfway up, leave a gap for windows to go into, then put a rectangle
         cap on top for the roof to go onto. Also make"""
+
+        active = maya.polyCube(w=8,h=1,d=2)[0]
+        car.append(active)
+        maya.move(0, .1,0)
+        active = maya.polyCube(w=8,h=.15,d=2)[0]  
+        car.append(active)
+        maya.move(0, 1.665, 0)
+
+
 
         #windows running along the midpoint
         '''Lots of types of windows. This might be an oportunity to make different functions for different window
@@ -144,15 +157,17 @@ class Car: #builds and holds specified cars
 
         return maya.group(windows)
 
-    def wheelSet(self):
+
+    def wheelSet(self, x = 0):
         wheels = []
+        wheels.append(wheelPair(.25, .85,.5+x))
+        wheels.append(wheelPair(.25, .85,-.5+x))
+        wheelgroup = maya.group(wheels)
         #make a frame
         #make the connector
         #call wheel pair twice and properly arrange them
         #desired details
-        return maya.group(wheels)
-
-
+        return wheelgroup
 
 
 class Train:
@@ -168,17 +183,35 @@ class Train:
         self.carlist.addNode(CarList(car))
 
 
-
+car = Car("passenger")
 
 
 
     
 
 
-myFirstTrain = Train()
-print(myFirstTrain.cars)
+#myFirstTrain = Train()
+#print(myFirstTrain.cars)
+
+#for reference only
+#maya.polyCube(w=8,h=2.5,d=2)[0]
+#car = []
 
 
+#active = maya.polyCube(w=8,h=1,d=2)[0]
+#car.append(active)
+#maya.move(0, .1,0)
+#active = maya.polyCube(w=8,h=.15,d=2)[0]  
+#car.append(active)
+#maya.move(0, 1.665, 0)
 
+
+#leave buffer 1 tall for windows. They go here.
+#active = maya.polyCube(w=8,h=1,d=2)[0]  
+#car.append(active)
+#maya.move(0, 1.1, 0)
+
+#wheelPair(size, width, x: float = 0):
+    
 
 
