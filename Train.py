@@ -187,7 +187,59 @@ car = Car("passenger")
 
 
 
+        #leave buffer 1 tall for windows. They go here.
+#active = maya.polyCube(w=8,h=1,d=2)[0]  
+#car.append(active)
+#maya.move(0, 1.1, 0)
+
+    def simpleWindows(self, length = 8, width = 2):#length is how long the car is. Width is distance from center of car.
+        windows = []
+        '''These ones are just a bar on top, a bar on bottom, and blocks splitting the windows in between.'''
+        
+        active = self.simpleW(x)
+        windows.append(active)
+        return maya.group(windows)
+        
+length = 8
+width = 2
+l = length/2
+w = width/2
+
+windows = []  
+
+#baseboard
+active = maya.polyCube(w=8,h=.1,d=.1)[0]  
+windows.append(active)
+maya.move(0, .51, -w)
+active = maya.polyCube(w=8,h=.1,d=.1)[0]  
+windows.append(active)
+maya.move(0, .51, w)
+  
+#car ends
+active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+windows.append(active)
+maya.move(l-.25,1.1,w-.05)
+active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+windows.append(active)
+maya.move(-l+.25,1.1,w-.05)
+
+
+active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+windows.append(active)
+maya.move(l-.25,1.1,-w+.05)
+active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+windows.append(active)
+maya.move(-l+.25,1.1,-w+.05)
+
+#actual window
+def simpleWindow():
+    win = []
     
+    return maya.group(win)
+
+win = simpleWindow()
+    
+
 
 
 #myFirstTrain = Train()
