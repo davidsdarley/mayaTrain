@@ -1,10 +1,11 @@
 import maya.cmds as maya
-
-def wheel(radius):
+# creates a wheel and returns a reference to it. For the moment it's just a disc but I hope to replace it soon with something better
+def wheel(radius):    
     wheel = maya.polyCylinder(r= radius, h = .1)[0]
     maya.rotate(90,0,0)
     return wheel
-    
+
+#creates a par of wheels touching the 'ground' at y = -1. the size and width are given. you can optionally specify a position x to place them at.
 def wheelPair(size, width, x = 0):
     height = -1+size
     wheels = []
@@ -18,7 +19,7 @@ def wheelPair(size, width, x = 0):
     return wheels
 
 
-
+#a doubly linked list meant for storing Car objects
 class CarList:
     def __init__(self, obj, pre = None, next = None):
         self.obj = obj
@@ -41,7 +42,7 @@ class CarList:
 
 
 
-class Car:
+class Car: #builds and holds specified cars
     def __init__(self, carType, x = 0, y = 0, z = 0):
         self.carType = carType
         
@@ -56,8 +57,8 @@ class Car:
         else:
             return False
 
-    def engine(self):
-        engine = []
+    def engine(self): #makes my basic engine.
+        engine = [] #holds the components
             
         active = maya.polyCube(w=8,h=.5,d=2)[0]
         engine.append(active)
