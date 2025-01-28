@@ -142,7 +142,7 @@ class Car: #builds and holds specified cars
         windows = []
         '''These ones are just a bar on top, a bar on bottom, and blocks splitting the windows in between.'''
 
-        return windows
+        return maya.group(windows)
 
     def wheelSet(self):
         wheels = []
