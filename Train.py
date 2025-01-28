@@ -146,7 +146,10 @@ class Car: #builds and holds specified cars
 
     def wheelSet(self):
         wheels = []
-
+        #make a frame
+        #make the connector
+        #call wheel pair twice and properly arrange them
+        #desired details
         return maya.group(wheels)
 
 
