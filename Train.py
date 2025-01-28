@@ -6,7 +6,7 @@ def wheel(radius):
     return wheel
 
 #creates a par of wheels touching the 'ground' at y = -1. the size and width are given. you can optionally specify a position x to place them at.
-def wheelPair(size, width, x = 0):
+def wheelPair(size, width, x: float = 0):
     height = -1+size
     wheels = []
     active = wheel(size)
@@ -16,7 +16,7 @@ def wheelPair(size, width, x = 0):
     active = wheel(size)
     wheels.append(active)
     maya.move(x, height,width)
-    return wheels
+    return maya.group(wheels)
 
 
 #a doubly linked list meant for storing Car objects
@@ -43,10 +43,12 @@ class CarList:
 
 
 class Car: #builds and holds specified cars
-    def __init__(self, carType, x = 0, y = 0, z = 0):
+    def __init__(self, carType, train = None, x = 0, y = 0, z = 0):
         self.carType = carType
-        
-        self.parts = self.build()
+        self.train = train
+
+        self.parts = self.build()   #list of components
+        self.group = maya.group(self.parts)     #maya group
         self.x = x
         self.y = y
         self.z = z
@@ -88,21 +90,64 @@ class Car: #builds and holds specified cars
         size =.45
         for x in [0,2]:
           wheels = wheelPair(size, 1.1, x)
-          for item in wheels:
-              engine.append(item)
+          engine.append(wheels)
             
         size =.35   
         for x in range(2, 5):
             wheels = wheelPair(size, .85, -x+.5)
-            for item in wheels:
-                engine.append(item)
+            engine.append(wheels)
               
         #smokestack
         engine.append(maya.polyCylinder(r=.25, h = 1)[0])
         maya.move(-3,2,0)
-    
+
         return engine
 
+    def passenger(self):
+        car = []
+        #base and mechanical bits
+        '''little metal hang-y bits and the metal frame the box rests on.
+                - diagonal metal bars drooping down and meeting at the middle
+                - maybe some machinery?'''
+
+        # wheels
+        '''
+        Most boxcar type cars had two sets of 4 wheels: one in the front, one in the back.
+        they would be held together in a frame with some simple suspension and sit right underneath
+        the car.
+        Probably be smart to make a function to make one of these and then just call it any time I need boxcar type
+        wheels.
+        '''
+        #Long box for the passengers to go into
+        """make a box that only goes about halfway up, leave a gap for windows to go into, then put a rectangle
+        cap on top for the roof to go onto. Also make"""
+
+        #windows running along the midpoint
+        '''Lots of types of windows. This might be an oportunity to make different functions for different window
+        types'''
+        #roof
+        '''Also lots of ways to do this.'''
+
+        #doorway and stairs to go up to get in
+        '''Most passenger cars have roofs that extend over the stairs, and the box just ends early. Put a
+        door there and some windows on either side'''
+
+        #texture and details
+
+        return car
+
+
+    #Component building functions
+    def simpleWindows(self):
+        windows = []
+        '''These ones are just a bar on top, a bar on bottom, and blocks splitting the windows in between.'''
+
+        return windows
+
+    def wheelSet(self):
+        wheels = []
+
+        return maya.group(wheels)
 
 
 
@@ -110,12 +155,12 @@ class Car: #builds and holds specified cars
 class Train:
     def __init__(self):
         self.cars = []
-        firstCar = Car("engine")
+        firstCar = Car("engine", self)
         self.carlist = CarList(obj = firstCar)
         self.cars.append(firstCar)
     
     def addCar(self, new, x = 0, y= 0, z= 0):
-        car = Car(new, x, y, z)
+        car = Car(new, self, x, y, z)
         self.cars.append(car)
         self.carlist.addNode(CarList(car))
 
