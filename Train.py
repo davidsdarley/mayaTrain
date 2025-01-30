@@ -1,5 +1,24 @@
 import maya.cmds as maya
 import random
+groupcounters = {}
+
+def checkGroupName(type, num):
+    global groupcounters
+    n = type + str(num)
+    
+    if maya.objExists(n):
+        groupcounters[type] = num
+        return checkGroupName(type, num+1)
+    else:
+        groupcounters[type] = num + 1
+        return n
+
+def makeGroup(lst, type = "group"):
+    global groupcounters
+    counter = groupcounters.get(type, 0)
+    return maya.group(lst, name = checkGroupName(type, counter))
+        
+
 # creates a wheel and returns a reference to it. For the moment it's just a disc but I hope to replace it soon with something better
 def wheel(radius):    
     wheel = maya.polyCylinder(r= radius, h = .1)[0]
@@ -17,7 +36,8 @@ def wheelPair(size, width, x: float = 0):
     active = wheel(size)
     wheels.append(active)
     maya.move(x, height,width)
-    return maya.group(wheels)
+    return makeGroup(wheels, "wheelPair")
+    
 
 
 #a doubly linked list meant for storing Car objects
@@ -26,6 +46,9 @@ class CarList:
         self.obj = obj
         self.pre = pre
         self.next = next
+        self.index = 0
+        if pre != None:
+            self.index = pre.index + 1
         
     def remove(self):
         self.pre.next = self.next
@@ -38,6 +61,22 @@ class CarList:
             new.pre = self
         else:
             self.next.addNode(new)
+            
+    def getGroup(groupName = None, index = None):
+        if index != None:
+            if self.index == index:
+                return self.obj.grp
+            else:
+                return self.next.getGroup(groupName, index)
+                
+        elif groupName !=None:
+            if groupName == self.obj.grp:
+                return self.obj.grp
+            else:
+                return self.next.getGroup(groupName, index)
+                
+        else:
+            return self.obj.grp
         
 
 
@@ -49,7 +88,7 @@ class Car: #builds and holds specified cars
         self.train = train
 
         self.parts = self.build()   #list of components
-        self.group = maya.group(self.parts)     #maya group
+        self.grp = makeGroup(self.parts, carType)     #maya group
         self.x = x
         self.y = y
         self.z = z
@@ -61,6 +100,9 @@ class Car: #builds and holds specified cars
             return self.passenger()
         else:
             return False
+            
+    def getCar(self):
+        return self.group
 
     def engine(self): #makes my basic engine.
         engine = [] #holds the components
@@ -69,7 +111,8 @@ class Car: #builds and holds specified cars
         engine.append(active)
         active = maya.polyCube(w=8,h=.5,d=1.5)[0]
         engine.append(active)
-        maya.move(0,-.35,0)
+        maya.move(0,-.35,0)                
+
     
         
         active = maya.polyCube(w=2,h=1.5,d=2)[0]
@@ -187,14 +230,14 @@ class Car: #builds and holds specified cars
         windows.append(active)
         maya.move(-l+.25,1.1,-w+.05)
 
-        return maya.group(windows)
+        return makeGroup(windows, "simpleWindows")
 
 
     def wheelSet(self, x = 0):
         wheels = []
         wheels.append(wheelPair(.25, .85,.5+x))
         wheels.append(wheelPair(.25, .85,-.5+x))
-        wheelgroup = maya.group(wheels)
+        wheelgroup = makeGroup(wheels, "wheelSet")
         #make a frame
         #make the connector
         #call wheel pair twice and properly arrange them
@@ -203,20 +246,21 @@ class Car: #builds and holds specified cars
 
 
 class Train:
-    def __init__(self):
+    def __init__(self, type = None, length = None, translate = (0,0,0), numcars = 10):
         self.cars = []
         firstCar = Car("engine", self)
         self.carlist = CarList(obj = firstCar)
-        self.cars.append(firstCar)
+        self.cars.append(firstCar.grp)
+        self.grp = makeGroup(self.cars, "train")
         
         cars = ["passenger"]
-        numcars = 10
         for car in range(numcars):
             type = random.choice(cars)
             self.addCar("passenger")
             length = len(self.cars)*9 -9
 
             maya.move(length, 0, 0, r=True)
+            
 
     
     def addCar(self, new, x = 0, y= 0, z= 0):
@@ -224,10 +268,8 @@ class Train:
         self.cars.append(car)
         self.carlist.addNode(CarList(car))
         maya.select(car.parts)
+        maya.parent(car.grp, self.grp)
 
 
 
-myFirstTrain = Train()
-print(myFirstTrain.cars)
-
-
+myFirstTrain = Train(numcars = 1)
