@@ -229,9 +229,73 @@ class Car: #builds and holds specified cars
         active = maya.polyCube(w=.5,h=1,d=.1)[0]  
         windows.append(active)
         maya.move(-l+.25,1.1,-w+.05)
+     
+        row = []
+        #make an actual window
+        for x in range(32, -35, -8):
+            active = self.simpleWindow()
+            row.append(active)
+            maya.move(x/10, .6, -w)
+            
+        #seperators
+        for x in range(28, -35, -8):
+            active = maya.polyCube(w=.2,h=1.2,d=.05)[0]  
+            row.append(active)
+            maya.move(x/10, 1, -w+.05)
+        row = makeGroup(row, "windowRow")
+        windows.append(row)
+        
+        #other side's windows
+        row = []
 
+        for x in range(32, -35, -8):
+            active = self.simpleWindow()
+            row.append(active)
+            maya.rotate(0,180,0)
+            maya.move(x/10, .6, w)
+            
+
+        for x in range(28, -35, -8):
+            active = maya.polyCube(w=.2,h=1.2,d=.05)[0]  
+            row.append(active)
+            maya.rotate(0,180,0)
+            maya.move(x/10, 1, w-.05)
+        row = makeGroup(row, "windowRow")
+        windows.append(row)
+        
+        
+        
         return makeGroup(windows, "simpleWindows")
-
+        
+    def simpleWindow(self):
+        win = []
+        dim = .055
+        #outer frame
+        active = maya.polyCube(w=.5,h=dim,d=dim)[0]    #bottom
+        win.append(active)  
+        active = maya.polyCube(w=dim,h=1.08,d=dim)[0]  #left
+        win.append(active)  
+        maya.move(.275, .513,0)
+        active = maya.polyCube(w=dim,h=1.08,d=dim)[0]  #right
+        win.append(active)  
+        maya.move(-.275, .513,0)
+        active = maya.polyCube(w=.5,h=dim,d=dim)[0]    #top
+        win.append(active)  
+        maya.move(0,1.0255,0)
+        #inner slidey bit
+        dim = .04
+        active = maya.polyCube(w=.5,h=dim,d=dim)[0]    #top
+        win.append(active)  
+        maya.move(0,.95,0.055)
+        active = maya.polyCube(w=.5,h=dim,d=dim)[0]    #bottom
+        win.append(active)  
+        maya.move(0,.7,0.055)
+        for x in [-.25, 0, .25]:
+            active = maya.polyCube(w=dim,h=.25,d=dim)[0]
+            win.append(active)  
+            maya.move(x,.825,0.055)
+            
+        return makeGroup(win, "window")
 
     def wheelSet(self, x = 0):
         wheels = []
