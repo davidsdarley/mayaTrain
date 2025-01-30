@@ -186,6 +186,8 @@ class Car: #builds and holds specified cars
         car.append(active)
         #roof
         '''Also lots of ways to do this.'''
+        car.append(self.roof())
+        maya.move(0,1.75,0)
 
         #doorway and stairs to go up to get in
         '''Most passenger cars have roofs that extend over the stairs, and the box just ends early. Put a
@@ -296,6 +298,32 @@ class Car: #builds and holds specified cars
             maya.move(x,.825,0.055)
             
         return makeGroup(win, "window")
+        
+    
+    def roof(self):
+        roof = []
+        
+        active = maya.polyCube(w=8.25, h = .2, d = 2.25)[0]
+        roof.append(active)
+        active = maya.polyCylinder(r=1.125, h = 8.25)[0]
+        roof.append(active)
+        maya.rotate(0,0,90)
+        maya.move(0,.1,0)
+        maya.scale(.1,1,1)
+        
+        active = maya.polyCube(w=7.25, h = .2, d = 1.25)[0]
+        roof.append(active)
+        maya.move(0,.2, 0)
+        
+        active = maya.polyCylinder(r=.625, h = 7.25)[0]
+        roof.append(active)
+        maya.rotate(0,0,90)
+        maya.move(0,.3,0)
+        maya.scale(.125,1,1)
+        
+        return makeGroup(roof, "roof")
+
+
 
     def wheelSet(self, x = 0):
         wheels = []
@@ -339,4 +367,4 @@ class Train:
 
 
 
-myFirstTrain = Train()
+myFirstTrain = Train(numcars = 2)
