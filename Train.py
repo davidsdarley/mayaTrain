@@ -252,7 +252,7 @@ class Car: #builds and holds specified cars
             active = self.simpleWindow()
             row.append(active)
             maya.rotate(0,180,0)
-            maya.move(x/10, .6, w)
+            maya.move(x/10, .6, w-0.055)
             
 
         for x in range(28, -35, -8):
@@ -310,17 +310,20 @@ class Car: #builds and holds specified cars
 
 
 class Train:
-    def __init__(self, type = None, length = None, translate = (0,0,0), numcars = 10):
+    def __init__(self, type = None, length = None, translate = (0,0,0), numcars = None):
         self.cars = []
         firstCar = Car("engine", self)
         self.carlist = CarList(obj = firstCar)
         self.cars.append(firstCar.grp)
         self.grp = makeGroup(self.cars, "train")
+        if numcars == None:
+            numcars = random.randint(1, 25)
         
         cars = ["passenger"]
+        
         for car in range(numcars):
             type = random.choice(cars)
-            self.addCar("passenger")
+            self.addCar(type)
             length = len(self.cars)*9 -9
 
             maya.move(length, 0, 0, r=True)
@@ -336,4 +339,4 @@ class Train:
 
 
 
-myFirstTrain = Train(numcars = 1)
+myFirstTrain = Train()
