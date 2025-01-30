@@ -1,4 +1,5 @@
 import maya.cmds as maya
+import random
 # creates a wheel and returns a reference to it. For the moment it's just a disc but I hope to replace it soon with something better
 def wheel(radius):    
     wheel = maya.polyCylinder(r= radius, h = .1)[0]
@@ -32,11 +33,11 @@ class CarList:
             self.next.pre = self.pre
     
     def addNode(self, new):
-        if self.nxt == None:
+        if self.next == None:
             self.next = new
             new.pre = self
         else:
-            self.next.addCar(new)
+            self.next.addNode(new)
         
 
 
@@ -138,6 +139,8 @@ class Car: #builds and holds specified cars
         #windows running along the midpoint
         '''Lots of types of windows. This might be an oportunity to make different functions for different window
         types'''
+        active = self.simpleWindows()
+        car.append(active)
         #roof
         '''Also lots of ways to do this.'''
 
@@ -154,6 +157,35 @@ class Car: #builds and holds specified cars
     def simpleWindows(self):
         windows = []
         '''These ones are just a bar on top, a bar on bottom, and blocks splitting the windows in between.'''
+        length = 8
+        width = 2
+        l = length/2
+        w = width/2
+
+
+        #baseboard
+        active = maya.polyCube(w=8,h=.1,d=.1)[0]  
+        windows.append(active)
+        maya.move(0, .51, -w)
+        active = maya.polyCube(w=8,h=.1,d=.1)[0]  
+        windows.append(active)
+        maya.move(0, .51, w)
+  
+        #car ends
+        active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+        windows.append(active)
+        maya.move(l-.25,1.1,w-.05)
+        active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+        windows.append(active)
+        maya.move(-l+.25,1.1,w-.05)
+        
+        
+        active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+        windows.append(active)
+        maya.move(l-.25,1.1,-w+.05)
+        active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+        windows.append(active)
+        maya.move(-l+.25,1.1,-w+.05)
 
         return maya.group(windows)
 
@@ -176,94 +208,26 @@ class Train:
         firstCar = Car("engine", self)
         self.carlist = CarList(obj = firstCar)
         self.cars.append(firstCar)
+        
+        cars = ["passenger"]
+        numcars = 10
+        for car in range(numcars):
+            type = random.choice(cars)
+            self.addCar("passenger")
+            length = len(self.cars)*9 -9
+
+            maya.move(length, 0, 0, r=True)
+
     
     def addCar(self, new, x = 0, y= 0, z= 0):
         car = Car(new, self, x, y, z)
         self.cars.append(car)
         self.carlist.addNode(CarList(car))
-
-
-car = Car("passenger")
-
-
-
-        #leave buffer 1 tall for windows. They go here.
-#active = maya.polyCube(w=8,h=1,d=2)[0]  
-#car.append(active)
-#maya.move(0, 1.1, 0)
-
-    def simpleWindows(self, length = 8, width = 2):#length is how long the car is. Width is distance from center of car.
-        windows = []
-        '''These ones are just a bar on top, a bar on bottom, and blocks splitting the windows in between.'''
-        
-        active = self.simpleW(x)
-        windows.append(active)
-        return maya.group(windows)
-        
-length = 8
-width = 2
-l = length/2
-w = width/2
-
-windows = []  
-
-#baseboard
-active = maya.polyCube(w=8,h=.1,d=.1)[0]  
-windows.append(active)
-maya.move(0, .51, -w)
-active = maya.polyCube(w=8,h=.1,d=.1)[0]  
-windows.append(active)
-maya.move(0, .51, w)
-  
-#car ends
-active = maya.polyCube(w=.5,h=1,d=.1)[0]  
-windows.append(active)
-maya.move(l-.25,1.1,w-.05)
-active = maya.polyCube(w=.5,h=1,d=.1)[0]  
-windows.append(active)
-maya.move(-l+.25,1.1,w-.05)
-
-
-active = maya.polyCube(w=.5,h=1,d=.1)[0]  
-windows.append(active)
-maya.move(l-.25,1.1,-w+.05)
-active = maya.polyCube(w=.5,h=1,d=.1)[0]  
-windows.append(active)
-maya.move(-l+.25,1.1,-w+.05)
-
-#actual window
-def simpleWindow():
-    win = []
-    
-    return maya.group(win)
-
-win = simpleWindow()
-    
+        maya.select(car.parts)
 
 
 
-#myFirstTrain = Train()
-#print(myFirstTrain.cars)
-
-#for reference only
-#maya.polyCube(w=8,h=2.5,d=2)[0]
-#car = []
-
-
-#active = maya.polyCube(w=8,h=1,d=2)[0]
-#car.append(active)
-#maya.move(0, .1,0)
-#active = maya.polyCube(w=8,h=.15,d=2)[0]  
-#car.append(active)
-#maya.move(0, 1.665, 0)
-
-
-#leave buffer 1 tall for windows. They go here.
-#active = maya.polyCube(w=8,h=1,d=2)[0]  
-#car.append(active)
-#maya.move(0, 1.1, 0)
-
-#wheelPair(size, width, x: float = 0):
-    
+myFirstTrain = Train()
+print(myFirstTrain.cars)
 
 
