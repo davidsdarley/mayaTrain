@@ -8,7 +8,7 @@ def checkGroupName(type, num):
     
     if maya.objExists(n):
         groupcounters[type] = num
-        return checkGroupName(type, num+1)
+        return checkGroupName(type, num+100)
     else:
         groupcounters[type] = num + 1
         return n
@@ -368,3 +368,61 @@ class Train:
 
 
 myFirstTrain = Train(numcars = 2)
+
+
+#working on fancy wheels
+
+def wheelSet(x = 0):
+        wheels = []
+        wheels.append(wheelPair(.25, .85,.5+x))
+        wheels.append(wheelPair(.25, .85,-.5+x))
+        wheelgroup = makeGroup(wheels, "wheelSet")
+        #make a frame
+        #make the connector
+        #call wheel pair twice and properly arrange them
+        #desired details
+        return wheelgroup
+
+run = wheelSet()
+
+for i in range(0,3):
+
+active = maya.polyCube(w=.4 , h=.01, d=1.9)[0]
+maya.move(0,-.3,0, r= True)   
+active = maya.polyCube(w=.4 , h=.1, d=1.9)[0]
+maya.move(0, -.11, 0, r = True)
+
+
+maya.polyCube(w=1,h=.1,d=.2)
+maya.polyHelix( radius=.015, height=.2, coils=7, width=0.15)
+maya.move(.1, -.2, 0, r = True)
+maya.polyHelix( radius=.015, height=.2, coils=7, width=0.15)
+maya.move(-.1, -.2, 0, r = True)
+maya.polyHelix( radius=.015, height=.2, coils=7, width=0.15)
+maya.move(0, -.2, .1, r = True)
+
+active = maya.polyCube(w=.1 , h=.1, d=.1)[0]
+
+
+
+face = active+ ".f[3]"
+maya.select(face)
+maya.scale(.5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
