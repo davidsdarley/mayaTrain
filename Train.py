@@ -194,6 +194,7 @@ class Car: #builds and holds specified cars
         door there and some windows on either side'''
 
         #texture and details
+        car.append(self.woodSiding())
 
         return car
 
@@ -264,8 +265,6 @@ class Car: #builds and holds specified cars
             maya.move(x/10, 1, w-.05)
         row = makeGroup(row, "windowRow")
         windows.append(row)
-        
-        
         
         return makeGroup(windows, "simpleWindows")
         
@@ -408,6 +407,29 @@ class Car: #builds and holds specified cars
         wheelgroup = makeGroup(wheels, "wheelSet")
             
         return wheelgroup
+        
+        
+    def woodSiding(self, length = 8, width = 2):
+        #make a board
+        #lets make each pair of sticky-outy and not sticky-outy boards take up .5 squares for easy repition
+        #move into position
+        #repeat
+        wood = []
+        for depth in [-width/2, width/2]:
+            siding = []
+            for i in range(0, length*2):
+                i = (i-length)/2+.25
+                siding.append(maya.polyCube(w=.25,h= 1, d=.1)[0])
+                maya.move(-.25/2+i, 0,.025, r=True)
+                siding.append(maya.polyCube(w=.25, h=1, d=.1)[0])
+                maya.move(+.25/2+i, 0,-0.025, r=True)
+                
+            grp = makeGroup(siding, "siding")
+            maya.move(0, 0 ,depth, r = True)
+            wood.append(grp)
+        
+        return makeGroup(wood, "woodSiding")
+
 
 
 class Train:
@@ -441,5 +463,10 @@ class Train:
 
 
 
-myFirstTrain = Train(numcars = 2)
+myFirstTrain = Train()
+
+
+
+
+
 
