@@ -194,7 +194,11 @@ class Car: #builds and holds specified cars
         door there and some windows on either side'''
 
         #texture and details
-        car.append(self.woodSiding())
+        siding = random.randint(1, 2)
+        if siding == 1:
+            car.append(self.woodSiding())  
+        else:
+            car.append(self.metalSiding())
 
         return car
 
@@ -429,6 +433,27 @@ class Car: #builds and holds specified cars
             wood.append(grp)
         
         return makeGroup(wood, "woodSiding")
+        
+    def metalSiding(self, length = 8, width = 2):
+        metal = []
+        for depth in [-width/2, width/2]:
+            siding = []
+            for i in range(0, length*2):
+                siding 
+                i = (i-length)/2+.25
+                
+                
+                siding.append(metalSheet())
+                maya.move(i, 0, 0, r=True)
+                
+                
+            grp = makeGroup(siding, "siding")
+            maya.move(0, 0 ,depth, r = True)
+            metal.append(grp)
+            
+    
+        
+        return makeGroup(metal, "metalSiding")
 
 
 
@@ -464,6 +489,40 @@ class Train:
 
 
 myFirstTrain = Train()
+
+
+
+
+
+
+def metalSheet():
+    #each will be .5 wide, with rivets going up and down
+    metal = []
+    metal.append(maya.polyCube(w=.45, h = .8, d =.05)[0])
+    
+    
+    for x in [.175, -.175]:
+       
+        rivet = maya.polyCylinder(r=.015,h =.075)[0]
+        metal.append(rivet)
+        maya.rotate(90, 0,0)
+        maya.move(x, .35, 0, r= True)
+        for i in range(1, 10):
+            metal.append(maya.duplicate(rivet)[0])
+            maya.select(metal[-1])
+            translate = .8/10*i
+            maya.move(0, -translate, 0, r= True)
+    
+    metal = makeGroup(metal, "metal")
+    maya.move(0,.05,0,r = True)
+    return metal
+
+
+
+
+
+
+
 
 
 
