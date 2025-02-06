@@ -1,22 +1,18 @@
 import maya.cmds as maya
 import random
 groupcounters = {}
-
-def checkGroupName(type, num):
-    global groupcounters
-    n = type + str(num)
-    
-    if maya.objExists(n):
-        groupcounters[type] = num
-        return checkGroupName(type, num+100)
-    else:
-        groupcounters[type] = num + 1
-        return n
+trainReference = 0
+while maya.objExists("train"+str(trainReference)):
+    trainReference += 10000
+        
 
 def makeGroup(lst, type = "group"):
     global groupcounters
-    counter = groupcounters.get(type, 0)
-    return maya.group(lst, name = checkGroupName(type, counter))
+    global trainReference
+    counter = groupcounters.get(str(type), 0)
+    groupcounters[str(type)] = counter + 1
+    n = str(type) + str(counter + trainReference)
+    return maya.group(lst, name = n)
         
 
 # creates a wheel and returns a reference to it. For the moment it's just a disc but I hope to replace it soon with something better
@@ -659,3 +655,33 @@ class Train:
 
 
 myFirstTrain = Train(numcars = 5)
+
+
+
+
+
+
+def ventroof(self):
+    roof = []
+    #base
+    active = maya.polyCube(w=8.25, h = .2, d = 2.25)[0]
+    roof.append(active)
+    active = maya.polyCylinder(r=1.125, h = 8.25)[0]
+    roof.append(active)
+    maya.rotate(0,0,90)
+    maya.move(0,.1,0)
+    maya.scale(.1,1,1)
+    
+    #top part
+    for x in [2.5, -2.5]:
+        active = maya.polyCube(w= .6, h = .2, d = .6)[0]
+        roof.append(active)
+        maya.move(x,.3, 0)
+        active = maya.polyCube(w = .85, h = .1, d = .85)[0]
+        roof.append(active)
+        maya.move(x,.4,0)
+    makeGroup(roof, "roof")
+        
+#car = Car("Passenger")
+
+ 
