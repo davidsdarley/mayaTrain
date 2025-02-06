@@ -235,9 +235,11 @@ class Car: #builds and holds specified cars
         
         #roof
         '''Also lots of ways to do this.'''
-        roof = random.randint(1, 2)
+        roof = random.randint(1, 3)
         if roof == 1:
             car.append(self.basicroof())  
+        elif roof == 2:
+            car.append(self.ventroof())
         else:
             car.append(self.railingroof())
         maya.move(0,1.75,0)
@@ -491,6 +493,30 @@ class Car: #builds and holds specified cars
         return makeGroup(roof, "roof")
     
 
+    
+    def ventroof(self):
+        roof = []
+        #base
+        active = maya.polyCube(w=8.25, h = .2, d = 2.25)[0]
+        roof.append(active)
+        active = maya.polyCylinder(r=1.125, h = 8.25)[0]
+        roof.append(active)
+        maya.rotate(0,0,90)
+        maya.move(0,.1,0)
+        maya.scale(.1,1,1)
+        
+        #top part
+        for x in [2.5, -2.5]:
+            dim = 1.5
+            active = maya.polyCube(w= dim, h = .15, d = dim)[0]
+            roof.append(active)
+            maya.move(x,.4, 0)
+            dim = 1
+            active = maya.polyCube(w= dim, h = .3, d = dim)[0]
+            roof.append(active)
+            maya.move(x,.2, 0)
+                
+        return makeGroup(roof, "roof")
 
 
 
@@ -660,27 +686,6 @@ myFirstTrain = Train(numcars = 5)
 
 
 
-
-def ventroof(self):
-    roof = []
-    #base
-    active = maya.polyCube(w=8.25, h = .2, d = 2.25)[0]
-    roof.append(active)
-    active = maya.polyCylinder(r=1.125, h = 8.25)[0]
-    roof.append(active)
-    maya.rotate(0,0,90)
-    maya.move(0,.1,0)
-    maya.scale(.1,1,1)
-    
-    #top part
-    for x in [2.5, -2.5]:
-        active = maya.polyCube(w= .6, h = .2, d = .6)[0]
-        roof.append(active)
-        maya.move(x,.3, 0)
-        active = maya.polyCube(w = .85, h = .1, d = .85)[0]
-        roof.append(active)
-        maya.move(x,.4,0)
-    makeGroup(roof, "roof")
         
 #car = Car("Passenger")
 
