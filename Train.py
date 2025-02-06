@@ -235,11 +235,13 @@ class Car: #builds and holds specified cars
         
         #roof
         '''Also lots of ways to do this.'''
-        roof = random.randint(1, 3)
+        roof = random.randint(1, 4)
         if roof == 1:
             car.append(self.basicroof())  
         elif roof == 2:
             car.append(self.ventroof())
+        elif roof == 3:
+            car.append(self.curvedroof())
         else:
             car.append(self.railingroof())
         maya.move(0,1.75,0)
@@ -519,6 +521,42 @@ class Car: #builds and holds specified cars
         return makeGroup(roof, "roof")
 
 
+    def curvedroof(self):
+        roof = []
+        #base
+        active = maya.polyCube(w=8.25, h = .2, d = 2.25)[0]
+        roof.append(active)
+        active = maya.polyCylinder(r=1.125, h = 8.25)[0]
+        roof.append(active)
+        maya.rotate(0,0,90)
+        maya.move(0,.1,0)
+        maya.scale(.1,1,1)
+        
+        #canopy thing
+        roof.append(maya.polyCube(w=8, h = .15, d = 1.25)[0])
+        maya.move(0,.2,0)
+        active = maya.polyCube(w=8, h = .25, d = 1.25)[0]
+        roof.append(active)
+        maya.move(0,.4,0)
+        maya.select([active+ ".e[6]", active+ ".e[7]"])
+        maya.polyBevel(fraction = 1, segments = 10, offsetAsFraction = True)
+        
+        for d in [.5, -.5]:
+            active = maya.polyCube(w=8.25, h = .45, d = .25)[0]
+            roof.append(active)
+            maya.move(0,.4, d)
+            maya.select([active+ ".e[6]", active+ ".e[7]"])
+            maya.polyBevel(fraction = 1, segments = 10, offsetAsFraction = True)
+            
+        
+        for d in [.65, -.65]:
+            active = maya.polyCube(w=7.75, h = .25, d = .25)[0]
+            roof.append(active)
+            maya.move(0,.3, d)
+            maya.select([active+ ".e[6]", active+ ".e[7]"])
+            maya.polyBevel(fraction = 1, segments = 10, offsetAsFraction = True)
+        
+        return makeGroup(roof, "Canopy")
 
     def wheelSet(self, x = 0):
         wheels = []
@@ -688,5 +726,4 @@ myFirstTrain = Train(numcars = 5)
 
         
 #car = Car("Passenger")
-
  
