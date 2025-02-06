@@ -38,7 +38,56 @@ def wheelPair(size, width, x: float = 0):
     maya.move(x, height,width)
     return makeGroup(wheels, "wheelPair")
     
+def metalSheet():
+    #each will be .5 wide, with rivets going up and down
+    metal = []
+    metal.append(maya.polyCube(w=.45, h = .8, d =.1)[0])
+    
+    
+    for x in [.175, -.175]:
+       
+        rivet = maya.polyCylinder(r=.015,h =.125)[0]
+        metal.append(rivet)
+        maya.rotate(90, 0,0)
+        maya.move(x, .35, 0, r= True)
+        for i in range(1, 10):
+            metal.append(maya.duplicate(rivet)[0])
+            maya.select(metal[-1])
+            translate = .8/10*i
+            maya.move(0, -translate, 0, r= True)
+    
+    metal = makeGroup(metal, "metal")
+    maya.move(0,.05,0,r = True)
+    return metal
 
+def archwindow():
+    win = []
+    dim = .055
+#1 wide, .66 tall base and .33 tall arch.
+
+#left and right squares
+    for x in [0.25, -0.25]:
+        active = maya.polyCube(w=.5,h=dim,d=dim)[0]    #bottom
+        maya.move(x, 0,x/10)
+        win.append(active)  
+        active = maya.polyCube(w=dim,h=.66,d=dim)[0]  #left
+        win.append(active)  
+        maya.move(.275+x, .3026,x/10)
+        active = maya.polyCube(w=dim,h=.66,d=dim)[0]  #right
+        win.append(active)  
+        maya.move(-.275+x, .3026,x/10)
+        active = maya.polyCube(w=.5,h=dim,d=dim)[0]    #top
+        win.append(active)  
+        maya.move(x,0.6051,x/10)
+    
+        #top arch
+    active = maya.polyCube(w=1.11, h = .33, d= dim*2)[0]
+    win.append(active)
+    maya.move(0, .797, .025)
+    maya.select([active+".e[7]", active + ".e[6]"])
+    maya.polyBevel(fraction = 1, segments = 10, offsetAsFraction = True)
+            
+    return makeGroup(win, "window")
 
 #a doubly linked list meant for storing Car objects
 class CarList:
@@ -182,8 +231,12 @@ class Car: #builds and holds specified cars
         #windows running along the midpoint
         '''Lots of types of windows. This might be an oportunity to make different functions for different window
         types'''
-        active = self.simpleWindows()
-        car.append(active)
+        windows = random.randint(1, 2)
+        if windows == 1:
+            car.append(self.simpleWindows())  
+        else:
+            car.append(self.archwindows())
+        
         #roof
         '''Also lots of ways to do this.'''
         car.append(self.roof())
@@ -272,6 +325,77 @@ class Car: #builds and holds specified cars
         
         return makeGroup(windows, "simpleWindows")
         
+
+
+    def archwindows(self, length = 8, width = 2):
+    
+        windows = []
+        l = length/2
+        w = width/2
+            #baseboard
+        active = maya.polyCube(w=8,h=.1,d=.1)[0]  
+        windows.append(active)
+        maya.move(0, .51, -w)
+        active = maya.polyCube(w=8,h=.1,d=.1)[0]  
+        windows.append(active)
+        maya.move(0, .51, w)
+            #car ends
+        active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+        windows.append(active)
+        maya.move(l-.25,1.1,w-.05)
+        active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+        windows.append(active)
+        maya.move(-l+.25,1.1,w-.05)
+        
+        active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+        windows.append(active)
+        maya.move(l-.25,1.1,-w+.05)
+        active = maya.polyCube(w=.5,h=1,d=.1)[0]  
+        windows.append(active)
+        maya.move(-l+.25,1.1,-w+.05)
+         
+        row = []
+            #make an actual window
+        for x in range(32, -28, -12):
+            active = archwindow()
+            row.append(active)
+            maya.move(x/8-1, .6, -w)
+            #seperators
+        for x in range(20, -28, -12):
+            active = maya.polyCube(w=.45,h=1.2, d=.05)[0]  
+            row.append(active)
+            maya.move(x/8-.25, 1, -w+.05)
+        active = maya.polyCube(w=8,h=.3, d=.05)[0]  
+        row.append(active)
+        maya.move(0, 1.42, -w+.05)
+        row = makeGroup(row, "windowRow")
+        maya.move(0, .029, 0, r= True)
+        windows.append(row)
+            
+            #other side's windows
+        row = []
+    
+        for x in range(32, -28, -12):
+            active = archwindow()
+            row.append(active)
+            maya.rotate(0,180,0)
+            maya.move(x/8-1, .6, w-0.055)
+            
+    
+        for x in range(20, -28, -12):
+            active = maya.polyCube(w=.45,h=1.2, d=.05)[0]  
+            row.append(active)
+            maya.rotate(0,180,0)
+            maya.move(x/8-.25, 1, w-.05)
+        active = maya.polyCube(w=8,h=.3, d=.05)[0]  
+        row.append(active)
+        maya.move(0, 1.42, w-.05)
+        row = makeGroup(row, "windowRow")
+        maya.move(0, .029, 0.025, r= True)
+        windows.append(row)
+        
+        return makeGroup(windows, "archWindows")
+        
     def simpleWindow(self):
         win = []
         dim = .055
@@ -301,6 +425,9 @@ class Car: #builds and holds specified cars
             maya.move(x,.825,0.055)
             
         return makeGroup(win, "window")
+        
+        
+    
         
     
     def roof(self):
@@ -488,44 +615,4 @@ class Train:
 
 
 
-myFirstTrain = Train()
-
-
-
-
-
-
-def metalSheet():
-    #each will be .5 wide, with rivets going up and down
-    metal = []
-    metal.append(maya.polyCube(w=.45, h = .8, d =.05)[0])
-    
-    
-    for x in [.175, -.175]:
-       
-        rivet = maya.polyCylinder(r=.015,h =.075)[0]
-        metal.append(rivet)
-        maya.rotate(90, 0,0)
-        maya.move(x, .35, 0, r= True)
-        for i in range(1, 10):
-            metal.append(maya.duplicate(rivet)[0])
-            maya.select(metal[-1])
-            translate = .8/10*i
-            maya.move(0, -translate, 0, r= True)
-    
-    metal = makeGroup(metal, "metal")
-    maya.move(0,.05,0,r = True)
-    return metal
-
-
-
-
-
-
-
-
-
-
-
-
-
+myFirstTrain = Train(numcars = 5)
