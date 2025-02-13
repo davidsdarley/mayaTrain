@@ -14,6 +14,20 @@ def makeGroup(lst, type = "group"):
     n = str(type) + str(counter + trainReference)
     return maya.group(lst, name = n)
         
+def fltrng(num1, num2 = None, inc = 1):
+    if num2 == None:
+        min = 0
+        max = num1
+    else:
+        min = num1
+        max = num2
+        
+    lst = []
+    num = min
+    while num < max:
+        lst.append(num)
+        num += inc
+    return lst
 
 # creates a wheel and returns a reference to it. For the moment it's just a disc but I hope to replace it soon with something better
 def wheel(radius):    
@@ -34,6 +48,7 @@ def wheelPair(size, width, x: float = 0):
     maya.move(x, height,width)
     return makeGroup(wheels, "wheelPair")
     
+
 def metalSheet():
     #each will be .5 wide, with rivets going up and down
     metal = []
@@ -46,15 +61,15 @@ def metalSheet():
         metal.append(rivet)
         maya.rotate(90, 0,0)
         maya.move(x, .35, 0, r= True)
-        for i in range(1, 10):
+        for i in fltrng(.07, .78, .08):
             metal.append(maya.duplicate(rivet)[0])
             maya.select(metal[-1])
-            translate = .8/10*i
-            maya.move(0, -translate, 0, r= True)
+            maya.move(0, -i, 0, r= True)
     
     metal = makeGroup(metal, "metal")
     maya.move(0,.05,0,r = True)
     return metal
+
 
 def archwindow():
     win = []
