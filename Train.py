@@ -282,16 +282,14 @@ class Car: #builds and holds specified cars
         width = 2
         l = length/2
         w = width/2
-
-
         #baseboard
-        active = maya.polyCube(w=8,h=.1,d=.1)[0]  
+        active = maya.polyCube(w=length+.1,h=.1,d=.1)[0]  
         windows.append(active)
         maya.move(0, .51, -w)
-        active = maya.polyCube(w=8,h=.1,d=.1)[0]  
+        active = maya.polyCube(w=length +.1,h=.1,d=.1)[0]  
         windows.append(active)
         maya.move(0, .51, w)
-  
+          
         #car ends
         active = maya.polyCube(w=.5,h=1,d=.1)[0]  
         windows.append(active)
@@ -299,45 +297,62 @@ class Car: #builds and holds specified cars
         active = maya.polyCube(w=.5,h=1,d=.1)[0]  
         windows.append(active)
         maya.move(-l+.25,1.1,w-.05)
-        
-        
+                
+                
         active = maya.polyCube(w=.5,h=1,d=.1)[0]  
         windows.append(active)
         maya.move(l-.25,1.1,-w+.05)
         active = maya.polyCube(w=.5,h=1,d=.1)[0]  
         windows.append(active)
         maya.move(-l+.25,1.1,-w+.05)
-     
+        
         row = []
         #make an actual window
-        for x in range(32, -35, -8):
+        
+        start = -length/2+.8
+        end = length/2-.5-.61/2
+        winspace = length-1
+        numwindows = (length-.8)//.81
+        inc = (end-start)/numwindows
+        for x in fltrng(start, end, inc):
             active = self.simpleWindow()
             row.append(active)
-            maya.move(x/10, .6, -w)
-            
-        #seperators
-        for x in range(28, -35, -8):
-            active = maya.polyCube(w=.2,h=1.2,d=.05)[0]  
+            maya.move(x, .6, -w)
+        numsep = int(numwindows-1)
+        width = (length-1-(.61*numwindows))/numsep
+        start = start+.56-width/2
+            #seperators
+        for x in fltrng(start, end+.1, inc):
+            active = maya.polyCube(w=width,h=1.2,d=.05)[0]  
             row.append(active)
-            maya.move(x/10, 1, -w+.05)
+            maya.move(x, 1.05, -w+.05)
         row = makeGroup(row, "windowRow")
         windows.append(row)
         
         #other side's windows
+        
+        
         row = []
-
-        for x in range(32, -35, -8):
+        
+        start = -length/2+.8
+        end = length/2-.5-.61/2
+        winspace = length-1
+        numwindows = (length-.8)//.81
+        inc = (end-start)/numwindows
+        for x in fltrng(start, end, inc):
             active = self.simpleWindow()
             row.append(active)
             maya.rotate(0,180,0)
-            maya.move(x/10, .6, w-0.055)
-            
-
-        for x in range(28, -35, -8):
-            active = maya.polyCube(w=.2,h=1.2,d=.05)[0]  
+            maya.move(x, .6, w-0.055)
+        numsep = int(numwindows-1)
+        width = (length-1-(.61*numwindows))/numsep
+        start = start+.56-width/2
+            #seperators
+        for x in fltrng(start, end+.1, inc):
+            active = maya.polyCube(w=width,h=1.2,d=.05)[0]  
             row.append(active)
             maya.rotate(0,180,0)
-            maya.move(x/10, 1, w-.05)
+            maya.move(x, 1.05, w-.05)
         row = makeGroup(row, "windowRow")
         windows.append(row)
         
@@ -450,20 +465,20 @@ class Car: #builds and holds specified cars
     
     def basicroof(self):
         roof = []
-        
-        active = maya.polyCube(w=8.25, h = .2, d = 2.25)[0]
+        length = self.length +.25
+        active = maya.polyCube(w=length, h = .2, d = 2.25)[0]
         roof.append(active)
-        active = maya.polyCylinder(r=1.125, h = 8.25)[0]
+        active = maya.polyCylinder(r=1.125, h = length)[0]
         roof.append(active)
         maya.rotate(0,0,90)
         maya.move(0,.1,0)
         maya.scale(.1,1,1)
         
-        active = maya.polyCube(w=7.25, h = .2, d = 1.25)[0]
+        active = maya.polyCube(w=length-1, h = .2, d = 1.25)[0]
         roof.append(active)
         maya.move(0,.2, 0)
         
-        active = maya.polyCylinder(r=.625, h = 7.25)[0]
+        active = maya.polyCylinder(r=.625, h = length-1)[0]
         roof.append(active)
         maya.rotate(0,0,90)
         maya.move(0,.3,0)
