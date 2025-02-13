@@ -763,4 +763,30 @@ myFirstTrain = Train(numcars = 5)
 
         
 #car = Car("Passenger")
+
+#making a flatbed car
+
+length = 8
+width = 2
+
+car =[]
+car.append(maya.polyCube(w= length, h = .25, d = width)[0])
+
+base =[]
+offset = .05
+for x in fltrng(-length/2+.25/2, length/2+.01, .25):
+    base.append(maya.polyCube(w = .25, h = .1, d = width+.15)[0])
+    maya.move(x, .25/2, offset)
+    offset *=-1
+    
+
+
+
+
+
+car.append(makeGroup(base, "platform")
+
+
+    
+
  
