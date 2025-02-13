@@ -143,15 +143,14 @@ class CarList:
 
 
 class Car: #builds and holds specified cars
-    def __init__(self, carType, train = None, x = 0, y = 0, z = 0):
+    def __init__(self, carType, train = None, length = 8):
         self.carType = carType
         self.train = train
+        self.length = length
 
         self.parts = self.build()   #list of components
         self.grp = makeGroup(self.parts, carType)     #maya group
-        self.x = x
-        self.y = y
-        self.z = z
+        
     
     def build(self):
         if self.carType == "engine":
@@ -477,16 +476,18 @@ class Car: #builds and holds specified cars
     def railingroof(self):
         roof = []
         #base
-        active = maya.polyCube(w=8.25, h = .2, d = 2.25)[0]
+        length = self.length+.25
+        active = maya.polyCube(w=length, h = .2, d = 2.25)[0]
         roof.append(active)
-        active = maya.polyCylinder(r=1.125, h = 8.25)[0]
+        active = maya.polyCylinder(r=1.125, h = length)[0]
         roof.append(active)
         maya.rotate(0,0,90)
         maya.move(0,.1,0)
         maya.scale(.1,1,1)
         
         #top parts
-        for x in [2.5, -2.5]:
+        width = self.length/2 -1.5
+        for x in [width, -width]:
             active = maya.polyCube(w= .6, h = .2, d = .6)[0]
             roof.append(active)
             maya.move(x,.3, 0)
@@ -498,10 +499,12 @@ class Car: #builds and holds specified cars
         #railing 1
         
         for w in [.9, -.9]:
-            roof.append(maya.polyCylinder(r=.05, h = 7.5)[0])
+            roof.append(maya.polyCylinder(r=.05, h = length-1)[0])
             maya.rotate(0,0,90)
             maya.move(0, .3, w)
-            for x in range(-3, 4):
+            max = self.length/2
+            min = -max+1
+            for x in fltrng(min, max):
                 roof.append(maya.polyCylinder(r=.02, h = .2)[0])
                 maya.move(x, .2, w)
                 
@@ -514,16 +517,18 @@ class Car: #builds and holds specified cars
     def ventroof(self):
         roof = []
         #base
-        active = maya.polyCube(w=8.25, h = .2, d = 2.25)[0]
+        length = self.length +.25
+        active = maya.polyCube(w= length, h = .2, d = 2.25)[0]
         roof.append(active)
-        active = maya.polyCylinder(r=1.125, h = 8.25)[0]
+        active = maya.polyCylinder(r=1.125, h = length)[0]
         roof.append(active)
         maya.rotate(0,0,90)
         maya.move(0,.1,0)
         maya.scale(.1,1,1)
         
         #top part
-        for x in [2.5, -2.5]:
+        width = self.length/2-1.5
+        for x in [width, -width]:
             dim = 1.5
             active = maya.polyCube(w= dim, h = .15, d = dim)[0]
             roof.append(active)
@@ -539,25 +544,26 @@ class Car: #builds and holds specified cars
     def curvedroof(self):
         roof = []
         #base
-        active = maya.polyCube(w=8.25, h = .2, d = 2.25)[0]
+        length = self.length+.25
+        active = maya.polyCube(w= length, h = .2, d = 2.25)[0]
         roof.append(active)
-        active = maya.polyCylinder(r=1.125, h = 8.25)[0]
+        active = maya.polyCylinder(r=1.125, h = length)[0]
         roof.append(active)
         maya.rotate(0,0,90)
         maya.move(0,.1,0)
         maya.scale(.1,1,1)
         
         #canopy thing
-        roof.append(maya.polyCube(w=8, h = .15, d = 1.25)[0])
+        roof.append(maya.polyCube(w=length-.25, h = .15, d = 1.25)[0])
         maya.move(0,.2,0)
-        active = maya.polyCube(w=8, h = .25, d = 1.25)[0]
+        active = maya.polyCube(w=self.length-.25, h = .25, d = 1.25)[0]
         roof.append(active)
         maya.move(0,.4,0)
         maya.select([active+ ".e[6]", active+ ".e[7]"])
         maya.polyBevel(fraction = 1, segments = 10, offsetAsFraction = True)
         
         for d in [.5, -.5]:
-            active = maya.polyCube(w=8.25, h = .45, d = .25)[0]
+            active = maya.polyCube(w=length, h = .45, d = .25)[0]
             roof.append(active)
             maya.move(0,.4, d)
             maya.select([active+ ".e[6]", active+ ".e[7]"])
@@ -565,7 +571,7 @@ class Car: #builds and holds specified cars
             
         
         for d in [.65, -.65]:
-            active = maya.polyCube(w=7.75, h = .25, d = .25)[0]
+            active = maya.polyCube(w = length - .5, h = .25, d = .25)[0]
             roof.append(active)
             maya.move(0,.3, d)
             maya.select([active+ ".e[6]", active+ ".e[7]"])
@@ -708,6 +714,7 @@ class Train:
         firstCar = Car("engine", self)
         self.carlist = CarList(obj = firstCar)
         self.cars.append(firstCar.grp);
+        self.length = firstCar.length/2+1
 
         self.grp = makeGroup(self.cars, "train")
         if numcars == None:
@@ -718,18 +725,18 @@ class Train:
         for car in range(numcars):
             type = random.choice(cars)
             self.addCar(type)
-            length = len(self.cars)*9 -9
-
-            maya.move(length, 0, 0, r=True)
             
 
-    
-    def addCar(self, new, x = 0, y= 0, z= 0):
-        car = Car(new, self, x, y, z)
+    #self, carType, train = None, length = 8
+    def addCar(self, new, length = 8):
+        car = Car(new, self, length)
         self.cars.append(car)
         self.carlist.addNode(CarList(car))
         maya.select(car.parts)
         maya.parent(car.grp, self.grp)
+        maya.move(self.length+car.length/2, 0, 0, r=True)
+        self.length+= car.length +1
+
 
 
 
