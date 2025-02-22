@@ -880,7 +880,9 @@ maya.move(radius, 0, 0)
 if outer:
     pass
 else:
-    maya.xform(ring[-1], pivots = (0,0,0))
+    maya.xform(ring[-1], pivots = (0,0,0), worldSpace = True)
     for i in fltrng(360/count, 360, 360/count):
         ring.append(maya.duplicate())
         maya.rotate(0,i,0)
+
+  
