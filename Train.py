@@ -157,6 +157,8 @@ class Car: #builds and holds specified cars
             return self.engine()
         elif self.carType == "passenger":
             return self.passenger()
+        elif self.carType == "flatbed":
+            return self.flatbed()
         else:
             return False
             
@@ -273,6 +275,44 @@ class Car: #builds and holds specified cars
 
         return car
 
+    #making a flatbed car
+    def flatbed(self, length = 8, width = 2):
+        car =[]
+        car.append(maya.polyCube(w= length, h = .4, d = width)[0])
+        maya.move(0, -.2, 0)
+        
+        
+        base =[]
+        offset = .025
+        for x in fltrng(-length/2+.25/2, length/2+.01, .25):
+            base.append(maya.polyCube(w = .24, h = .1, d = width+.25)[0])
+            maya.move(x, .25/2, offset)
+            offset *=-1
+            
+        for x in fltrng(-length/2+.875, length/2+.01, 1.25):
+            base.append(maya.polyCube(w = .14, h = .25, d = width+.2)[0])
+            maya.move(x, 0, 0)
+            base.append(maya.polyCylinder(r = .03, h =  width+.05)[0])
+            maya.rotate(90,0,0)
+            maya.move(x+.14, 0,0)
+            base.append(maya.polyCylinder(r = .03, h =  width+.05)[0])
+            maya.move(x-.14, 0,0)
+            maya.rotate(90,0,0)
+        
+        car.append(makeGroup(base, "platform"))
+        maya.move(0, -.1, 0)
+        #ends
+        
+        
+        
+        #wheels
+        for x in [3,-3]:
+            car.append(self.wheelSet(x))
+            
+        return makeGroup(car, "flatbed")
+            
+    
+    
 
     #Component building functions
     def simpleWindows(self):
@@ -726,16 +766,16 @@ class Car: #builds and holds specified cars
 class Train:
     def __init__(self, type = None, length = None, translate = (0,0,0), numcars = None):
         self.cars = []
-        firstCar = Car("engine", self)
-        self.carlist = CarList(obj = firstCar)
-        self.cars.append(firstCar.grp);
-        self.length = firstCar.length/2+1
+        self.firstCar = Car("engine", self)
+        self.carlist = CarList(obj = self.firstCar)
+        self.cars.append(self.firstCar.grp);
+        self.length = self.firstCar.length/2+1
 
         self.grp = makeGroup(self.cars, "train")
         if numcars == None:
             numcars = random.randint(1, 25)
         
-        cars = ["passenger"]
+        cars = ["passenger", "flatbed"]
         
         for car in range(numcars):
             type = random.choice(cars)
@@ -757,36 +797,5 @@ class Train:
 
 myFirstTrain = Train(numcars = 5)
 
-
-
-
-
-        
-#car = Car("Passenger")
-
-#making a flatbed car
-
-length = 8
-width = 2
-
-car =[]
-car.append(maya.polyCube(w= length, h = .25, d = width)[0])
-
-base =[]
-offset = .05
-for x in fltrng(-length/2+.25/2, length/2+.01, .25):
-    base.append(maya.polyCube(w = .25, h = .1, d = width+.15)[0])
-    maya.move(x, .25/2, offset)
-    offset *=-1
-    
-
-
-
-
-
-car.append(makeGroup(base, "platform")
-
-
-    
 
  
