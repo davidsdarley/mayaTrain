@@ -30,12 +30,7 @@ def fltrng(num1, num2 = None, inc = 1):
     return lst
 
 def boltcircle(radius =.25, r =.01, count = 8, outer = False):
-    radius =.25
-    r =.01
-    count = 8
-    outer = True
     ring =[]
-    
     ring.append(maya.polyCylinder(r = r, h = .01, subdivisionsX = 6, subdivisionsY = 1)[0])
     maya.move(radius, 0, 0)
     if outer:
@@ -49,7 +44,6 @@ def boltcircle(radius =.25, r =.01, count = 8, outer = False):
         for i in fltrng(360/count, 360, 360/count):
             ring.append(maya.duplicate()[0])
             maya.rotate(0,i,0)
-    
     return makeGroup(ring, "bolts")
 # creates a wheel and returns a reference to it. For the moment it's just a disc but I hope to replace it soon with something better
 def wheel(radius):    
@@ -884,5 +878,8 @@ maya.move(-d-.25,h+.3,0)
 load.append(maya.polyCylinder(r =.1, h = 2.4)[0])
 maya.move(-d-.25,h+.3,0)
 
-
+load.append(boltcircle(radius = .125))
+maya.move(0, h+1.405,0)
+load.append(boltcircle(radius = .075, count = 4))
+maya.move(0, h+1.4525,0)
  
