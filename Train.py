@@ -867,3 +867,20 @@ maya.move(-d-.25,h+.3,0)
     
 
  
+
+#def boltcircle(radius =.25, r =.01, count = 8, outer = False):
+radius =.25
+r =.01
+count = 8
+outer = False
+ring =[]
+
+ring.append(maya.polyCylinder(r = r, h = .01, subdivisionsX = 6, subdivisionsY = 1)[0])
+maya.move(radius, 0, 0)
+if outer:
+    pass
+else:
+    maya.xform(ring[-1], pivots = (0,0,0))
+    for i in fltrng(360/count, 360, 360/count):
+        ring.append(maya.duplicate())
+        maya.rotate(0,i,0)
