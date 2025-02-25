@@ -319,7 +319,9 @@ class Car: #builds and holds specified cars
         maya.move(0, -.1, 0)
         #ends
         
-        
+        #load
+        car.append(self.oiltank())
+        maya.move(0,.2,0)
         
         #wheels
         for x in [3,-3]:
@@ -329,6 +331,103 @@ class Car: #builds and holds specified cars
             
     
     
+    def oiltank(self, length = 8, width = 2):
+        
+        load = []
+        maya.move(0,0,0)
+           
+        w = width/2-.05
+        l = length -1
+        h = width/2-.25
+        #main tank
+        load.append(maya.polyCylinder(r = w, h = l)[0])
+        maya.rotate(0,0,90)
+        maya.move(0,h,0)
+        
+        load.append(maya.polySphere(r = w)[0])
+        maya.scale(.5,1,1)
+        maya.move(l/2,h,0)
+        load.append(maya.polySphere(r = w)[0])
+        maya.scale(.5,1,1)
+        maya.move(-l/2,h,0)
+        
+        load.append(maya.polyCylinder(r =.5, h = 2)[0])
+        maya.move(0,h+.3,0)
+        load.append(maya.polyCylinder(r =.55, h = .1)[0])
+        maya.move(0,h+1.3,0)
+        load.append(maya.polySphere(r = .55)[0])
+        maya.scale(1,.1,1)
+        maya.move(0,h+1.35,0)
+        load.append(maya.polyCylinder(r =.1, h = 2.2)[0])
+        maya.move(0,h+.35,0)
+        load.append(maya.polyCylinder(r =.0275, h = 2.2)[0])
+        maya.move(0,h+.4,0)
+        
+        load.append(maya.polyTorus(r= .2, sr = .035, sx = 40)[0])
+        maya.move(0,h+1.55,0)
+        load.append(maya.polyCylinder(r= .015, h= .4)[0])
+        maya.rotate(0,0,90)
+        maya.move(0,h+1.55,0)
+        
+        load.append(maya.polyCylinder(r= .015, h= .4)[0])
+        maya.rotate(90,0,0)
+        maya.move(0,h+1.55,0)
+        
+            #bolts
+        load.append(boltcircle(radius = w, r= .02, count = 20, outer = True))
+        maya.rotate(0,90,0)
+        maya.move(l/2-.5,0.75, 0)
+        load.append(boltcircle(radius = w, r= .02, count = 20, outer = True))
+        maya.rotate(0,90,0)
+        maya.move(-l/2+.5,0.75, 0)
+        
+        
+        #Other pipes
+        d = 1
+        load.append(maya.polyCylinder(r =.3, h = 2.2)[0])
+        maya.move(d,h+.3,0)
+        load.append(maya.polyCylinder(r =.35, h = .02)[0])
+        maya.move(d,h+1.25,0)
+        
+        load.append(maya.polyCylinder(r =.15, h = 2.2)[0])
+        maya.move(-d-.25,h+.3,0)
+        
+        load.append(maya.polyCylinder(r =.1, h = 2.4)[0])
+        maya.move(-d-.25,h+.3,0)
+        
+        load.append(maya.polyCylinder(r =.2, h = .05)[0])
+        maya.move(-d-.25,h+1,0)
+        load.append(boltcircle(radius = .175, count = 6))
+        maya.move(-d-.25,h+1.025,0)
+        load.append(maya.polyCylinder(r =.16, h = .025)[0])
+        maya.move(-d-.25,h+1.3,0)
+        
+        load.append(boltcircle(radius = .125))
+        maya.move(0, h+1.405,0)
+        load.append(boltcircle(radius = .075, count = 4))
+        maya.move(0, h+1.4525,0)
+        #railings
+        hi = .45
+        ra = .035
+        x = l/2-.2
+        load.append(maya.polyCylinder(r =ra, h = hi)[0])
+        maya.move(x,hi/2, w+.015)
+        load.append(maya.polyCylinder(r =ra, h = hi)[0])
+        maya.move(-x,hi/2, w+.015)
+        load.append(maya.polyCylinder(r =ra, h = hi)[0])
+        maya.move(x,hi/2, -(w+.015))
+        load.append(maya.polyCylinder(r =ra, h = hi)[0])
+        maya.move(-x,hi/2, -(w+.015))
+        
+        load.append(maya.polyCylinder(r =.05, h = l)[0])
+        maya.rotate(0,0,90)
+        maya.move(0, hi,w+.015)
+        load.append(maya.polyCylinder(r =.05, h = l)[0])
+        maya.rotate(0,0,90)
+        maya.move(0, hi,-(w+.015))
+        
+        return makeGroup(load, "tanker")
+        
 
     #Component building functions
     def simpleWindows(self):
@@ -733,7 +832,7 @@ class Car: #builds and holds specified cars
         wheelgroup = makeGroup(wheels, "wheelSet")
             
         return wheelgroup
-        
+    
         
     def woodSiding(self, length = 8, width = 2):
         #make a board
@@ -813,73 +912,3 @@ class Train:
 
 myFirstTrain = Train(numcars = 5)
 
-
-
-
-
-        
-workCar = myFirstTrain.firstCar
-
-
-
-#def oiltank(self, length = 8, width = 2)
-
-load = []
-maya.move(0,0,0)
-    
-length = 8
-width = 2    
-w = width/2-.05
-l = length -1
-h = width/2-.25
-
-load.append(maya.polyCylinder(r = w, h = l)[0])
-maya.rotate(0,0,90)
-maya.move(0,h,0)
-
-load.append(maya.polySphere(r = w)[0])
-maya.scale(.5,1,1)
-maya.move(l/2,h,0)
-load.append(maya.polySphere(r = w)[0])
-maya.scale(.5,1,1)
-maya.move(-l/2,h,0)
-
-load.append(maya.polyCylinder(r =.5, h = 2)[0])
-maya.move(0,h+.3,0)
-load.append(maya.polyCylinder(r =.55, h = .1)[0])
-maya.move(0,h+1.3,0)
-load.append(maya.polySphere(r = .55)[0])
-maya.scale(1,.1,1)
-maya.move(0,h+1.35,0)
-load.append(maya.polyCylinder(r =.1, h = 2.2)[0])
-maya.move(0,h+.35,0)
-load.append(maya.polyCylinder(r =.0275, h = 2.2)[0])
-maya.move(0,h+.4,0)
-
-load.append(maya.polyTorus(r= .2, sr = .035, sx = 40)[0])
-maya.move(0,h+1.55,0)
-load.append(maya.polyCylinder(r= .015, h= .4)[0])
-maya.rotate(0,0,90)
-maya.move(0,h+1.55,0)
-
-load.append(maya.polyCylinder(r= .015, h= .4)[0])
-maya.rotate(90,0,0)
-maya.move(0,h+1.55,0)
-
-
-
-d = 1
-load.append(maya.polyCylinder(r =.3, h = 2.2)[0])
-maya.move(d,h+.3,0)
-
-load.append(maya.polyCylinder(r =.15, h = 2.2)[0])
-maya.move(-d-.25,h+.3,0)
-
-load.append(maya.polyCylinder(r =.1, h = 2.4)[0])
-maya.move(-d-.25,h+.3,0)
-
-load.append(boltcircle(radius = .125))
-maya.move(0, h+1.405,0)
-load.append(boltcircle(radius = .075, count = 4))
-maya.move(0, h+1.4525,0)
- 
