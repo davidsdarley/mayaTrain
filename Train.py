@@ -1023,7 +1023,8 @@ class Train:
         maya.parent(car.grp, self.grp)
         maya.move(self.length+car.length/2, 0, 0, r=True)
         self.length+= car.length +1
-
+        maya.polyCube(w=1,h=.2,d=.2)
+        maya.move(self.length-.5,0,0)
 
 
 num = int(input("how many cars would you like?"))
