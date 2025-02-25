@@ -29,6 +29,49 @@ def fltrng(num1, num2 = None, inc = 1):
         num += inc
     return lst
 
+
+def end(length = 8, width = 2):
+    
+    w = width/2+.25
+    
+    end = []
+    end.append(maya.polyCube(w=.05, h=1.9, d=width+.4)[0])
+    maya.move(0,1/3,0)
+    x = .2
+    y = 2
+    z = .1
+    active = maya.polyCube(w=x, h=y, d=z)[0]
+    end.append(active)
+    maya.move(0,1/3,w-z/2)
+    face = maya.select(end[-1]+ ".e[10]")
+    maya.move(-x,0,0, relative = True)
+    end.append(maya.duplicate(active)[0])
+    maya.select(active)
+    maya.move(0,0,-w+z/2, relative = True)
+    end.append(maya.duplicate(active)[0])
+    maya.move(0,0,-w+z, relative = True)
+    
+    scaler = 1.5
+    hights = fltrng(-.61, 1.4,.4) 
+    for h in hights: 
+        tempx = x*scaler
+        end.append(maya.polyCube(w= tempx, h=z, d=2*w)[0])
+        maya.move(-(tempx-x), h-.01, .025)
+        scaler -=.1
+    
+    return makeGroup(end, "end")
+    
+def flatbedEnds(length = 8, width = 2):
+    l = length/2
+    
+    firstend = end(length, width)
+    maya.rotate(0,180,0)
+    maya.move(l,0,0)
+    otherend =end(length, width)
+    maya.move(-l,0,0)
+    return makeGroup([firstend, otherend], "ends")
+    
+
 def boltcircle(radius =.25, r =.01, count = 8, outer = False):
     ring =[]
     ring.append(maya.polyCylinder(r = r, h = .01, subdivisionsX = 6, subdivisionsY = 1)[0])
@@ -181,6 +224,8 @@ class Car: #builds and holds specified cars
     def getCar(self):
         return self.group
 
+    
+    
     def engine(self): #makes my basic engine.
         engine = [] #holds the components
             
@@ -188,10 +233,7 @@ class Car: #builds and holds specified cars
         engine.append(active)
         active = maya.polyCube(w=8,h=.5,d=1.5)[0]
         engine.append(active)
-        maya.move(0,-.35,0)                
-
-    
-        
+        maya.move(0,-.35,0) 
         active = maya.polyCube(w=2,h=1.5,d=2)[0]
         engine.append(active)
         maya.move(3,1,0)
@@ -223,9 +265,53 @@ class Car: #builds and holds specified cars
         #smokestack
         engine.append(maya.polyCylinder(r=.25, h = 1)[0])
         maya.move(-3,2,0)
-
+        
+        engine.append(archwindow())
+        maya.move(3,.5,-1.025)
+        engine.append(archwindow())
+        maya.move(3,.5,+1.025)
+        
+        for set in [(.4,-1,2,0), (.5,.5,2,0),(.3,-2,0,90)]:
+          
+            item = []
+            ra = set[0]
+            x = set[1]
+            y = set[2]
+            d =0
+            rot = set[3]
+            if rot:
+                d = 1+ra
+            item.append(maya.polyCylinder(r=ra, h = 1)[0])
+            maya.move(x, y,d)
+            item.append(maya.polySphere(r=ra)[0])
+            maya.scale(1,1/2,1)
+            maya.move(x, y+.5, d)
+            item.append(maya.polySphere(r=ra)[0])
+            maya.scale(1,1/2,1)
+            maya.move(x, y-.5, d)
+            item = makeGroup(item, "cylinder")
+            maya.rotate(0,0,rot)
+            engine.append(item)
+        
+        ra = .5
+        x = .5
+        y = 2
+        engine.append(maya.polyCylinder(r=ra, h = 1)[0])
+        maya.move(x, y,0)
+        engine.append(maya.polySphere(r=ra)[0])
+        maya.scale(1,1/2,1)
+        maya.move(x, y+.5, 0)
+        
+        engine.append(maya.polyCone(r=.5, h = 1.5)[0])
+        maya.rotate(180,0,0)
+        maya.move(-3,2.25,0)
+        
+        for x in fltrng(-3,2,.4):
+            engine.append(maya.polyCylinder(r=.05, h = 1.9)[0])
+            maya.rotate(90,0,0)
+            maya.move(x,.75,0)
         return engine
-
+    
     def passenger(self):
         car = []
         #base and mechanical bits
@@ -940,53 +1026,9 @@ class Train:
 
 
 
-
-myFirstTrain = Train(numcars = 5)
-
-
-
-def end(length = 8, width = 2):
-    
-    w = width/2+.25
-    
-    end = []
-    end.append(maya.polyCube(w=.05, h=1.9, d=width+.4)[0])
-    maya.move(0,1/3,0)
-    x = .2
-    y = 2
-    z = .1
-    active = maya.polyCube(w=x, h=y, d=z)[0]
-    end.append(active)
-    maya.move(0,1/3,w-z/2)
-    face = maya.select(end[-1]+ ".e[10]")
-    maya.move(-x,0,0, relative = True)
-    end.append(maya.duplicate(active)[0])
-    maya.select(active)
-    maya.move(0,0,-w+z/2, relative = True)
-    end.append(maya.duplicate(active)[0])
-    maya.move(0,0,-w+z, relative = True)
-    
-    scaler = 1.5
-    hights = fltrng(-.61, 1.4,.4) 
-    for h in hights: 
-        tempx = x*scaler
-        end.append(maya.polyCube(w= tempx, h=z, d=2*w)[0])
-        maya.move(-(tempx-x), h-.01, .025)
-        scaler -=.1
-    
-    return makeGroup(end, "end")
-    
-def flatbedEnds(length = 8, width = 2):
-    l = length/2
-    
-    firstend = end(length, width)
-    maya.rotate(0,180,0)
-    maya.move(l,0,0)
-    otherend =end(length, width)
-    maya.move(-l,0,0)
-    return makeGroup([firstend, otherend], "ends")
-    
+num = int(input("how many cars would you like?"))
+myFirstTrain = Train(numcars = num)
 
 
 
- 
+
