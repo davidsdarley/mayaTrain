@@ -310,6 +310,8 @@ class Car: #builds and holds specified cars
             engine.append(maya.polyCylinder(r=.05, h = 1.9)[0])
             maya.rotate(90,0,0)
             maya.move(x,.75,0)
+        engine.append(maya.polyCube(w=1,h=.2,d=.2)[0])
+        maya.move(4.5,0,0)
         return engine
     
     def passenger(self):
@@ -374,7 +376,8 @@ class Car: #builds and holds specified cars
             car.append(self.woodSiding())  
         else:
             car.append(self.metalSiding())
-
+        car.append(maya.polyCube(w=1,h=.2,d=.2)[0])
+        maya.move(4.5,0,0)
         return car
 
     #making a flatbed car
@@ -416,7 +419,8 @@ class Car: #builds and holds specified cars
         #wheels
         for x in [3,-3]:
             car.append(self.wheelSet(x))
-            
+        car.append(maya.polyCube(w=1,h=.2,d=.2)[0])
+        maya.move(4.5,0,0)   
         return makeGroup(car, "flatbed")
             
     def woodload(self, length = 8, width = 2):
@@ -1023,8 +1027,7 @@ class Train:
         maya.parent(car.grp, self.grp)
         maya.move(self.length+car.length/2, 0, 0, r=True)
         self.length+= car.length +1
-        maya.polyCube(w=1,h=.2,d=.2)
-        maya.move(self.length-.5,0,0)
+        
 
 
 num = int(input("how many cars would you like?"))
