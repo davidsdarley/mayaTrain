@@ -320,8 +320,12 @@ class Car: #builds and holds specified cars
         #ends
         
         #load
-        car.append(self.oiltank())
-        maya.move(0,.2,0)
+        load = random.randint(0,1)
+        if load:
+            car.append(self.oiltank())
+            maya.move(0,.2,0)
+        else:
+            car.append(self.woodload())
         
         #wheels
         for x in [3,-3]:
@@ -329,7 +333,34 @@ class Car: #builds and holds specified cars
             
         return makeGroup(car, "flatbed")
             
-    
+    def woodload(self, length = 8, width = 2):
+        load = []
+        l = length -1
+        w = width/2
+        
+        bw = .45
+        leftEdge = -w+.2
+        rightEdge = w-bw
+        h = 0
+        
+        for h in fltrng(0,1, .11):
+            center = leftEdge+random.uniform(.01, .1)
+            noise = random.uniform(-0.25, .25)
+            while center <= rightEdge:
+                load.append(maya.polyCube(w = l, h = .1,  d = bw)[0])
+                maya.move(noise,h, center)
+                center += random.uniform(0.005, .01) + bw
+                noise = random.uniform(-0.25, .25)
+            load.append(maya.polyCube(w = l, h = .1,  d = bw)[0])
+            maya.move(noise,h, rightEdge+bw-random.uniform(.01, .1))
+            leftEdge += .05
+            rightEdge-=.05
+        
+        load.append(flatbedEnds())
+        maya.move(0,.25,0, relative = True)
+        load = makeGroup(load, "woodpile")
+        maya.move(0,0,-.1)
+        return load
     
     def oiltank(self, length = 8, width = 2):
         
@@ -912,3 +943,50 @@ class Train:
 
 myFirstTrain = Train(numcars = 5)
 
+
+
+def end(length = 8, width = 2):
+    
+    w = width/2+.25
+    
+    end = []
+    end.append(maya.polyCube(w=.05, h=1.9, d=width+.4)[0])
+    maya.move(0,1/3,0)
+    x = .2
+    y = 2
+    z = .1
+    active = maya.polyCube(w=x, h=y, d=z)[0]
+    end.append(active)
+    maya.move(0,1/3,w-z/2)
+    face = maya.select(end[-1]+ ".e[10]")
+    maya.move(-x,0,0, relative = True)
+    end.append(maya.duplicate(active)[0])
+    maya.select(active)
+    maya.move(0,0,-w+z/2, relative = True)
+    end.append(maya.duplicate(active)[0])
+    maya.move(0,0,-w+z, relative = True)
+    
+    scaler = 1.5
+    hights = fltrng(-.61, 1.4,.4) 
+    for h in hights: 
+        tempx = x*scaler
+        end.append(maya.polyCube(w= tempx, h=z, d=2*w)[0])
+        maya.move(-(tempx-x), h-.01, .025)
+        scaler -=.1
+    
+    return makeGroup(end, "end")
+    
+def flatbedEnds(length = 8, width = 2):
+    l = length/2
+    
+    firstend = end(length, width)
+    maya.rotate(0,180,0)
+    maya.move(l,0,0)
+    otherend =end(length, width)
+    maya.move(-l,0,0)
+    return makeGroup([firstend, otherend], "ends")
+    
+
+
+
+ 
